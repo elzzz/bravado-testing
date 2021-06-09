@@ -24,7 +24,14 @@ module CacheManager
     end
 
     def fill_cache
-      @perfect_offers, @good_offers, @other_offers = [], [], []
+      labeled_offers = get_labeled_offers
+      top_api_offers = top(labeled_offers, 5)
+      $redis.set("api_offers:#{@user.id}", Marshal.dump(top_api_offers))
+      top_api_offers
+    end
+
+    def get_labeled_offers
+      perfect_offers, good_offers, other_offers = [], [], []
 
       api_offers = GetApiCachedOffersService.call
       user_departments = @user.departments.map(&lambda { |department| department.name })
@@ -33,46 +40,32 @@ module CacheManager
         if @user.company == api_offer.fetch(:company)
           if (user_departments & api_offer.fetch(:departments)).length > 0
             api_offer[:label] = 'api_perfect_match'
-            @perfect_offers << api_offer
+            perfect_offers << api_offer
           else
             api_offer[:label] = 'api_good_match'
-            @good_offers << api_offer
+            good_offers << api_offer
           end
         else
           api_offer[:label] = 'api_offer'
-          @other_offers << api_offer
+          other_offers << api_offer
         end
       end
 
-      top_api_offers = top(5)
-      #noinspection RubyYardParamTypeMatch
-      $redis.set("api_offers:#{@user.id}", Marshal.dump(top_api_offers))
-      top_api_offers
+      [perfect_offers, good_offers, other_offers]
     end
 
-    def top(count=5)
+    def top(offers, count=5)
+      perfect_offers, good_offers, other_offers = offers
       top_perfect_offers, top_good_offers, top_other_offers = [], [], []
 
-      @perfect_offers.each do |perfect_offer|
-        break if count == 0
-        perfect_offer.delete(:departments)
-        top_perfect_offers << perfect_offer
-        count -= 1
-      end
+      slots = count - (top_perfect_offers.length + top_good_offers.length + top_other_offers.length)
+      top_perfect_offers += perfect_offers[0...slots]
 
-      @good_offers.each do |good_offer|
-        break if count == 0
-        good_offer.delete(:departments)
-        top_good_offers << good_offer
-        count -= 1
-      end
+      slots -= top_perfect_offers.length
+      top_good_offers += good_offers[0...slots]
 
-      @other_offers.each do |other_offer|
-        break if count == 0
-        other_offer.delete(:departments)
-        top_other_offers << other_offer
-        count -= 1
-      end
+      slots -= top_good_offers.length
+      top_other_offers += other_offers[0...slots]
 
       [top_perfect_offers, top_good_offers, top_other_offers]
     end

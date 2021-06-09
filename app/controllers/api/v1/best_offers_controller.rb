@@ -1,6 +1,6 @@
 class Api::V1::BestOffersController < ApplicationController
   def index
-    user = User.includes(:departments).left_outer_joins(:departments).find_by(id: params[:user_id])
+    user = User.includes(:departments).find_by(id: params[:user_id])
     unless user
       render json: { data: [], message: "User not found" }, status: :not_found
       return

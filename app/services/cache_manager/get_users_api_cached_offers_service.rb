@@ -37,8 +37,10 @@ module CacheManager
       user_departments = @user.departments.map(&lambda { |department| department.name })
 
       api_offers.each do |api_offer|
+        api_offer_departments = api_offer.fetch(:departments)
+        api_offer.delete(:departments)
         if @user.company == api_offer.fetch(:company)
-          if (user_departments & api_offer.fetch(:departments)).length > 0
+          if (user_departments & api_offer_departments).length > 0
             api_offer[:label] = 'api_perfect_match'
             perfect_offers << api_offer
           else

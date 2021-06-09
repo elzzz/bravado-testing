@@ -1,0 +1,13 @@
+default: &default
+  url: redis://localhost:6379
+  db: 1
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default
+  url: "redis://<%= ENV.fetch('REDIS_USERNAME', '') %>:<%= ENV.fetch('REDIS_PASSWORD', '') %>@<%= ENV.fetch('REDIS_HOST', 'localhost') %>:<%= ENV.fetch('REDIS_PORT', '6379') %>"

@@ -1,0 +1,4 @@
+:schedule:
+  api_offers_collector:
+    every: ['2h', first_in: '5s']
+    class: ApiOffersCollector

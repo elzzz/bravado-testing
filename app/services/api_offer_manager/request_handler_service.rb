@@ -1,3 +1,6 @@
+require 'uri'
+require 'net/http'
+
 module ApiOfferManager
   class RequestHandlerService < ApplicationService
     ResponseError = Class.new(StandardError)

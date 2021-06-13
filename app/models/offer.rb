@@ -1,7 +1,7 @@
 class Offer < ApplicationRecord
 
-  has_many :offer_departments
-  has_many :departments, through: :offer_departments
+  has_many :offer_department
+  has_many :department, through: :offer_department
 
   scope :by_company_icontains, -> (company_name) { where("company ILIKE :search", search: "%#{company_name}%") }
   scope :by_departments_ids, -> (department_ids) { where(offer_departments: { department_id: department_ids }) }

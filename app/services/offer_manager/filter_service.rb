@@ -8,7 +8,7 @@ module OfferManager
 
     def call
       relation = Offer
-      relation = relation.joins(:offer_departments).by_departments_ids @departments_ids if @departments_ids.length > 0
+      relation = relation.joins(:offer_department).by_departments_ids @departments_ids if @departments_ids.length > 0
       relation = relation.by_company_icontains @company_name if @company_name
       relation = relation.by_price_sort @price_sort if @price_sort.in? %w[desc asc]
 

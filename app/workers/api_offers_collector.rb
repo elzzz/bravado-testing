@@ -1,6 +1,3 @@
-require 'uri'
-require 'net/http'
-
 class ApiOffersCollector
   include Sidekiq::Worker
   sidekiq_options retry: false

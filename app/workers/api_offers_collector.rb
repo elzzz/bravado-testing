@@ -3,7 +3,6 @@ class ApiOffersCollector
   sidekiq_options retry: false
 
   def perform
-    api_offers = ApiOfferManager::FetchService.call
-    ApiOfferManager::RefreshDatabaseService.call api_offers
+    ApiOfferManager::RefreshDatabase.call
   end
 end

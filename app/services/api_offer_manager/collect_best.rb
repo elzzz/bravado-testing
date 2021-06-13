@@ -1,5 +1,5 @@
 module ApiOfferManager
-  class CollectBestService < ApplicationService
+  class CollectBest < ApplicationService
     def initialize(user, limit = 5)
       @user = user
       @limit = limit

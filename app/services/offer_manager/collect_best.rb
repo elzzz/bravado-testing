@@ -1,5 +1,5 @@
 module OfferManager
-  class CollectBestService < ApplicationService
+  class CollectBest < ApplicationService
     def initialize(user:, departments_ids:, company_name:, price_sort:)
       @user = user
       @departments_ids = departments_ids
@@ -8,7 +8,7 @@ module OfferManager
     end
 
     def call
-      relation = OfferManager::FilterService.call(
+      relation = OfferManager::Filter.call(
         departments_ids: @departments_ids,
         company_name: @company_name,
         price_sort: @price_sort
